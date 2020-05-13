@@ -1,3 +1,4 @@
+import dns.resolver
 from flask import abort, make_response
 
 # Data to serve with our API
@@ -15,64 +16,97 @@ domains = {
 }
 
 # Create a handler for our read (GET) people
-def obtener_custom_domains():
+def obtener_custom_domains(q = ''):
     """
-    Esta funcion maneja el request GET /api/domains
-
-    :return:        200 lista ordenada alfabeticamente de domains de la materia
+    Esta funcion maneja el request GET /api/custom_domains/
+     :q query:  Dominio a buscar en la lista de domains
+    :return:        200 lista ordenada alfabeticamente de domains si q es vacio, 200 los resultados
     """
     # Create the list of people from our data
-    return sorted(domains.values(), key=lambda domain: domain.get('domain'))
+    if not q:
+        return sorted(domains.values(), key=lambda domain: domain.get('domain'))
 
-def obtener_uno(id_alumno):
-    """
-    Esta funcion maneja el request GET /api/domains/{id_alumno}
-
-     :id_alumno body:  id del alumno que se quiere obtener
-    :return:        200 alumno, 404 alumno no encontrado
-    """
-    if id_alumno not in domains:
-        return abort(404, 'El alumno no fue encontrado')
-
-    return domains.get(id_alumno)
-
+    dup = False
+    for dominio_existente in domains.values():
+        dup = q == dominio_existente.get('domain')
+        if dup: 
+            return make_response(dominio_existente, 200)
+    return make_response('', 200)
+	
 def crear(**kwargs):
     """
-    Esta funcion maneja el request POST /api/domains
+    Esta funcion maneja el request POST /api/custom_domains/
 
-     :param body:  custdom a crear en la lista de domains
-    :return:        201 custdom creado, 400 ip o custom duplicado
+     :domain body:  Dominio a crear en la lista de domains
+    :return:        201 dominio creado, 400 faltan datos para crear el dominio, 401 dominio o ip existentes
     """
     custdom = kwargs.get('body')
     ip = custdom.get('ip')
     domain = custdom.get('domain')
     if not ip or not domain:
-        return abort(400, 'Faltan datos para crear un custdom')
+        return abort(400, 'Faltan datos para crear el dominio custom')
 
     dup = False
-    for alumno_existente in domains.values():
-        dup = ip == alumno_existente.get('ip') or domain == alumno_existente.get('domain')
+    for dominio_existente in domains.values():
+        dup = ip == dominio_existente.get('ip') or domain == dominio_existente.get('domain')
         if dup: break
 
     if dup:
-        return abort(400, 'ip o domain ya existentes')
+        return abort(401, 'ip o domain ya existentes')
 
     new_id = max(domains.keys()) + 1
-	custdom['custom'] = True
+    custdom['custom'] = True
     domains[new_id] = custdom
 
     return make_response(custdom, 201)
-
-def borrar(id_alumno):
+	
+def modificar(**kwargs):
     """
-    Esta funcion maneja el request DELETE /api/domains/{id_alumno}
+    Esta funcion maneja el request PUT /api/custom_domains/
 
-    :id_alumno body:  id del alumno que se quiere borrar
-    :return:        200 alumno, 404 alumno no encontrado
+     :domain body:  Nombre de dominio a modificar en la lista de domains
+    :return:        200 dominio modificado, 400 faltan datos para modificar el dominio, 404 domain not found
     """
-    if id_alumno not in domains:
-        return abort(404, 'El alumno no fue encontrado')
+    custdom = kwargs.get('body')
+    ip = custdom.get('ip')
+    domain = custdom.get('domain')
+    if not ip or not domain:
+        return abort(400, 'Faltan datos para modificar el dominio custom')
 
-    del domains[id_alumno]
+    dup = False
+    i = 0
+    for dominio_existente in domains.values():
+        dup = ip == dominio_existente.get('ip') or domain == dominio_existente.get('domain')
+        if dup:
+            dominio_existente['ip'] = ip
+            dominio_existente['domain'] = domain
+            return make_response(custdom, 200)
+        i = i + 1
 
-    return make_response('', 204)
+    return abort(404, 'Domain not found')
+
+def borrar(domain):
+    """
+    Esta funcion maneja el request DELETE /api/custom_domains/{domain}
+
+    :domain path:  nombre del dominio que se quiere borrar
+    :return:        200 dominio, 404 domain not found
+    """
+    if not domain:
+        return abort(400, 'Faltan datos para buscar el dominio')
+
+    dup = False
+    i = 1
+    for dominio_existente in domains.values():
+        dup = domain == dominio_existente.get('domain')
+        if dup: 
+            del domains[i]
+            return make_response(dominio_existente, 200)
+        i = i + 1
+    return abort(404, 'domain not found')
+
+def obtener_dominio(domain):
+
+    result = dns.resolver.query(domain)
+    for answer in result.response.answer:
+        print(answer)

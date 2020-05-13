@@ -17,6 +17,13 @@ paths:
         - "Custom Domains"
       summary: "Listado de dominios custom"
       description: "Obtiene la lista de todos los custom domains registrados"
+      parameters:
+        - in: query
+          name: q
+          required: false
+          schema:
+            type: string
+          description: El dominio del registro a buscar
       responses:
         200:
           description: "Operación de lectura exitosa"
@@ -48,20 +55,68 @@ paths:
                 $ref: '#/components/schemas/Domain'
         400:
           description: "Dominio o ip duplicado"
-  /alumnos/{id_alumno}:
-    get:
-      operationId: "api.alumnos.obtener_uno"
+  /custom-domains/{domain}:
+    put:
+      operationId: "api.dns.modificar"
       tags:
-        - "Alumnos"
-      summary: "Alumno de la materia"
-      description: "Obtiene un alumno particular de la materia"
+        - "Custom Domains"
+      summary: "Actualiza custom domain"
+      description: "Actualiza la informacion de un dominio custom del DoH"
       parameters:
         - in: path
-          name: id_alumno
+          name: domain
           required: true
           schema:
-            type: integer
-          description: El id del usuario a obtener
+            type: string
+          description: El dominio del registro a borrar
+      requestBody:
+        required: true
+        x-body-name: 'domain'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InputDomain'
+      responses:
+        200:
+          description: "Se cargo el dominio correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+        404:
+          description: "Domain not found"
+    delete:
+      operationId: "api.dns.borrar"
+      tags:
+        - "Custom Domains"
+      summary: "Borrar custom domain"
+      description: "Borra un dominio custom del DoH"
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El dominio del registro a borrar
+      responses:
+        200:
+          description: "Operación de borrado exitosa"
+        404:
+          description: "Dominio no encontrado"
+  /domains/{domain}:
+    get:
+      operationId: "api.dns.obtener_dominio"
+      tags:
+        - "Domains"
+      summary: "Busqueda dominio"
+      description: "Obtiene la ip asociada a un dominio"
+      parameters:
+        - in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+          description: El dominio para el cual se quiere averiguar la ip
       responses:
         200:
           description: "Operación de lectura exitosa"
@@ -70,25 +125,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Domain'
         404:
-          description: "Alumno no encontrado"
-    delete:
-      operationId: "api.alumnos.borrar"
-      tags:
-        - "Alumnos"
-      summary: "Borrar alumno de la materia"
-      description: "Borra un alumno de la materia"
-      parameters:
-        - in: path
-          name: id_alumno
-          required: true
-          schema:
-            type: integer
-          description: El id del usuario a borrar
-      responses:
-        204:
-          description: "Operación de lectura exitosa"
-        404:
-          description: "Alumno no encontrado"
+          description: "Dominio no encontrado"
 # Declaración de tipos de datos
 components:
   schemas:
