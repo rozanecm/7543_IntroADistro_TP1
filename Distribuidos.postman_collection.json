@@ -1,0 +1,121 @@
+{
+	"info": {
+		"_postman_id": "ed65ccc0-5f43-41da-bb32-687422f844a0",
+		"name": "Distribuidos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET CUSTOM DOMAINS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/custom-domains?q=www.fi.uba.ar",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"custom-domains"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "www.fi.uba.ar"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST CUSTOM DOMAINS",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"domain\": \"custom.fi.uba.ar\",\n\t\"ip\": \"1.1.1.1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/custom-domains",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"custom-domains"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE CUSTOM DOMAINS",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/custom-domains/custom.fi.uba.ar",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"custom-domains",
+						"custom.fi.uba.ar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT CUSTOM DOMAINS",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"domain\": \"www.fi.uba.ar\",\n\t\"ip\": \"1.2.3.4\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/custom-domains/localhost",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"custom-domains",
+						"localhost"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
