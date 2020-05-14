@@ -115,6 +115,26 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "GET REAL DOMAINS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/domains/google.com",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"domains",
+						"google.com"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}
