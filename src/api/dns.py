@@ -1,5 +1,5 @@
 import dns.resolver
-from flask import abort, make_response
+from flask import abort, make_response, jsonify
 
 # Data to serve with our API
 domains = {
@@ -44,7 +44,7 @@ def crear(**kwargs):
     ip = custdom.get('ip')
     domain = custdom.get('domain')
     if not ip or not domain:
-        return abort(400, 'Faltan datos para crear el dominio custom')
+        return make_response(jsonify({"error":'custom domain already exists'}),400)
 
     dup = False
     for dominio_existente in domains.values():
@@ -52,7 +52,7 @@ def crear(**kwargs):
         if dup: break
 
     if dup:
-        return abort(401, 'ip o domain ya existentes')
+        return make_response(jsonify({"error":'custom domain already exists'}),400)
 
     new_id = max(domains.keys()) + 1
     custdom['custom'] = True
