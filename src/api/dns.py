@@ -55,7 +55,7 @@ def crear(**kwargs):
         return make_response(jsonify({"error":'custom domain already exists'}),400)
 
     new_id = max(domains.keys()) + 1
-    custdom['custom'] = True
+    custdom['custom'] = 'true'
     domains[new_id] = custdom
 
     return make_response(custdom, 201)
