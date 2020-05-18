@@ -74,7 +74,6 @@ def modificar(**kwargs):
         return make_response(jsonify({'error':'payload is invalid'}), 400)
 
     dup = False
-    i = 0
     for dominio_existente in domains.values():
         dup = domain == dominio_existente.get('domain')
         if dup:
@@ -82,7 +81,6 @@ def modificar(**kwargs):
             dominio_existente['domain'] = domain
             dominio_existente['custom'] = 'true'
             return make_response(dominio_existente, 200)
-        i = i + 1
 
     return make_response(jsonify({'error':'domain not found'}), 404)
 
