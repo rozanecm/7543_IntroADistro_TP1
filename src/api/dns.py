@@ -38,11 +38,22 @@ def guardar_dominio(domain, ip, custom=False):
 # maneja que registro de los guardados hay que devolver.
 
 info_accesos = {}
-def agregar_info_accesos(domain, posiciones):
-    info_accesos[domain] = info_accesos_entry(posiciones)
+def agregar_info_accesos(domain, posiciones, ttl=float('Inf')):
+    info_accesos[domain] = info_accesos_entry(posiciones, ttl)
 
 def esta_local(domain):
-    return domain in info_accesos
+    if domain in info_accesos:
+        if not info_accesos[domain].sirve():
+            limpiar_dominios(info_accesos[domain].get_posiciones_in_dominios())
+            del info_accesos[domain]
+            return False
+        else:
+            return True
+    return False
+
+def limpiar_dominios(posiciones):
+    for posicion in posiciones:
+        del domains[posicion]
 
 agregar_info_accesos('localhost', [1])
 agregar_info_accesos('www.fi.uba.ar', [2])
@@ -149,11 +160,12 @@ def obtener_dominio(domain):
         if not esta_local(domain):
             print("no encontrado localmente. Resolviendo consulta hacia afuera")
             result = dns.resolver.query(domain)
+            ttl = result.ttl
             posiciones = []
             for ip in result:
                 posiciones.append(guardar_dominio(domain, str(ip)))
             print("info posiciones a agregar " + str(posiciones))
-            agregar_info_accesos(domain, posiciones)
+            agregar_info_accesos(domain, posiciones, ttl)
             print(domains)
         return (domains[info_accesos[domain].posicion_a_acceder()])
     except dns.resolver.NXDOMAIN:
