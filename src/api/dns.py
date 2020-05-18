@@ -22,16 +22,26 @@ def obtener_custom_domains(q = ''):
      :q query:  Dominio a buscar en la lista de domains
     :return:        200 lista ordenada alfabeticamente de domains si q es vacio, 200 los resultados
     """
-    # Create the list of people from our data
+    # Create the list custom domains
+    custom_domains_list = []
+    for item in domains.values():
+        if item['custom'] == 'true':
+            custom_domains_list.append(item)
+    
     if not q:
-        return sorted(domains.values(), key=lambda domain: domain.get('domain'))
+        custom_domains = {}
+        custom_domains['items'] = custom_domains_list
+        return custom_domains
 
     dup = False
-    for dominio_existente in domains.values():
+    custom_domains = {}
+    filtered_custom_domains = []
+    for dominio_existente in custom_domains_list:
         dup = q == dominio_existente.get('domain')
         if dup: 
-            return make_response(dominio_existente, 200)
-    return make_response('', 200)
+            filtered_custom_domains.append(dominio_existente)
+    custom_domains['items'] = filtered_custom_domains
+    return make_response(custom_domains, 200)
 	
 def crear(**kwargs):
     """
