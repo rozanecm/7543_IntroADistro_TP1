@@ -1,5 +1,5 @@
 import dns.resolver
-from flask import abort, make_response
+from flask import abort, make_response, jsonify
 
 # Data to serve with our API
 domains = {
@@ -71,19 +71,20 @@ def modificar(**kwargs):
     ip = custdom.get('ip')
     domain = custdom.get('domain')
     if not ip or not domain:
-        return abort(400, 'Faltan datos para modificar el dominio custom')
+        return make_response(jsonify({'error':'payload is invalid'}), 400)
 
     dup = False
     i = 0
     for dominio_existente in domains.values():
-        dup = ip == dominio_existente.get('ip') or domain == dominio_existente.get('domain')
+        dup = domain == dominio_existente.get('domain')
         if dup:
             dominio_existente['ip'] = ip
             dominio_existente['domain'] = domain
-            return make_response(custdom, 200)
+            dominio_existente['custom'] = 'true'
+            return make_response(dominio_existente, 200)
         i = i + 1
 
-    return abort(404, 'Domain not found')
+    return make_response(jsonify({'error':'domain not found'}), 404)
 
 def borrar(domain):
     """
