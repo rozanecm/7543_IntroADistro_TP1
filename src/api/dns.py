@@ -96,12 +96,13 @@ def crear(**kwargs):
     custdom = kwargs.get('body')
     ip = custdom.get('ip')
     domain = custdom.get('domain')
+    # check caso req. mal formado.
     if not ip or not domain:
         return make_response(jsonify({"error":'custom domain already exists'}),400)
 
     dup = False
     for dominio_existente in domains.values():
-        dup = ip == dominio_existente.get('ip') or domain == dominio_existente.get('domain')
+        dup = domain == dominio_existente.get('domain')
         if dup: break
 
     if dup:
