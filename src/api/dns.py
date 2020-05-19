@@ -111,6 +111,8 @@ def crear(**kwargs):
     custdom['custom'] = 'true'
     domains[new_id] = custdom
 
+    agregar_info_accesos(domain, [new_id])
+    print("added custom domain", domains)
     return make_response(custdom, 201)
 	
 def modificar(**kwargs):
@@ -178,4 +180,4 @@ def obtener_dominio(domain):
             print(domains)
         return (domains[info_accesos[domain].posicion_a_acceder()])
     except dns.resolver.NXDOMAIN:
-        return make_response(jsonify({'error':'Not Found'}), 404)
+        return make_response(jsonify({'error':'domain not found'}), 404)
