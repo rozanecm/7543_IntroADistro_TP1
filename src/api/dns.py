@@ -1,5 +1,6 @@
+from .info_accesos_entry import info_accesos_entry
 import dns.resolver
-from flask import abort, make_response
+from flask import abort, make_response, jsonify
 
 # Data to serve with our API
 domains = {
@@ -14,6 +15,48 @@ domains = {
         'custom': 'false',
     },
 }
+
+def guardar_dominio(domain, ip, custom=False):
+    """
+    Guarda dominio con su ip correspondiente en registro local de domains.
+    Devuelve clave asignada en diccionario 'domains'.
+    """
+    new_domain = {}
+    new_domain['domain'] = domain
+    new_domain['ip'] = ip
+
+    new_domain['custom'] = str(custom).lower()
+
+    new_id = max(domains.keys()) + 1
+    domains[new_id] = new_domain 
+    return new_id
+
+# El siguiente dict tiene como clave un dominio y como valor un objeto
+# info_accesos_entry, que devuelve la posicion a acceder del diccionario
+# 'domains' definido en la linea 6. De esta forma queda totalmente
+# implementado el Round Robin solicitado de forma interna en la clase que
+# maneja que registro de los guardados hay que devolver.
+
+info_accesos = {}
+def agregar_info_accesos(domain, posiciones, ttl=float('Inf')):
+    info_accesos[domain] = info_accesos_entry(posiciones, ttl)
+
+def esta_local(domain):
+    if domain in info_accesos:
+        if not info_accesos[domain].sirve():
+            limpiar_dominios(info_accesos[domain].get_posiciones_in_dominios())
+            del info_accesos[domain]
+            return False
+        else:
+            return True
+    return False
+
+def limpiar_dominios(posiciones):
+    for posicion in posiciones:
+        del domains[posicion]
+
+agregar_info_accesos('localhost', [1])
+agregar_info_accesos('www.fi.uba.ar', [2])
 
 # Create a handler for our read (GET) people
 def obtener_custom_domains(q = ''):
@@ -106,7 +149,24 @@ def borrar(domain):
     return abort(404, 'domain not found')
 
 def obtener_dominio(domain):
+    """
+    Esta funcion maneja el request GET /api/domains/<domain>
 
-    result = dns.resolver.query(domain)
-    for answer in result.response.answer:
-        print(answer)
+    :domain path:  nombre del dominio que se quiere obtener 
+    :return:        200 dominio, 404 domain not found
+    """
+    print("recibi requesta para " + domain)
+    try:
+        if not esta_local(domain):
+            print("no encontrado localmente. Resolviendo consulta hacia afuera")
+            result = dns.resolver.query(domain)
+            ttl = result.ttl
+            posiciones = []
+            for ip in result:
+                posiciones.append(guardar_dominio(domain, str(ip)))
+            print("info posiciones a agregar " + str(posiciones))
+            agregar_info_accesos(domain, posiciones, ttl)
+            print(domains)
+        return (domains[info_accesos[domain].posicion_a_acceder()])
+    except dns.resolver.NXDOMAIN:
+        return make_response(jsonify({'error':'Not Found'}), 404)
