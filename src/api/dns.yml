@@ -69,7 +69,7 @@ paths:
           required: true
           schema:
             type: string
-          description: El dominio del registro a borrar
+          description: El dominio del registro a modificar
       requestBody:
         required: true
         x-body-name: 'domain'
@@ -79,13 +79,13 @@ paths:
               $ref: '#/components/schemas/InputDomain'
       responses:
         200:
-          description: "Se cargo el dominio correctamente"
+          description: "Ok"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Domain'
         404:
-          description: "Domain not found"
+          description: "Not found"
     delete:
       operationId: "api.dns.borrar"
       tags:

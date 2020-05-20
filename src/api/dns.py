@@ -118,7 +118,7 @@ def crear(**kwargs):
     print("added custom domain", domains)
     return make_response(custdom, 201)
 	
-def modificar(**kwargs):
+def modificar(domain,**kwargs):
     """
     Esta funcion maneja el request PUT /api/custom_domains/
 
@@ -126,9 +126,10 @@ def modificar(**kwargs):
     :return:        200 dominio modificado, 400 faltan datos para modificar el dominio, 404 domain not found
     """
     custdom = kwargs.get('body')
+
     ip = custdom.get('ip')
-    domain = custdom.get('domain')
-    if not ip or not domain:
+    domain_body = custdom.get('domain')
+    if not ip or not domain_body:
         return make_response(jsonify({'error':'payload is invalid'}), 400)
 
     dup = False
