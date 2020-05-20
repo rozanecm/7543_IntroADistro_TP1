@@ -1,0 +1,237 @@
+{
+  "components": {
+    "schemas": {
+      "Domain": {
+        "properties": {
+          "custom": {
+            "type": "boolean"
+          }, 
+          "domain": {
+            "type": "string"
+          }, 
+          "ip": {
+            "type": "string"
+          }
+        }, 
+        "type": "object"
+      }, 
+      "Error": {
+        "properties": {
+          "codigo": {
+            "type": "number"
+          }, 
+          "mensaje": {
+            "type": "string"
+          }
+        }, 
+        "type": "object"
+      }, 
+      "InputDomain": {
+        "properties": {
+          "domain": {
+            "type": "string"
+          }, 
+          "ip": {
+            "type": "string"
+          }
+        }, 
+        "type": "object"
+      }
+    }
+  }, 
+  "info": {
+    "description": "Documentaci\u00f3n de la API de DNS on Https", 
+    "title": "API Rest DoH", 
+    "version": "1.0.0"
+  }, 
+  "openapi": "3.0.0", 
+  "paths": {
+    "/custom-domains": {
+      "get": {
+        "description": "Obtiene la lista de todos los custom domains registrados", 
+        "operationId": "api.dns.obtener_custom_domains", 
+        "parameters": [
+          {
+            "description": "El dominio del registro a buscar", 
+            "in": "query", 
+            "name": "q", 
+            "required": false, 
+            "schema": {
+              "type": "string"
+            }
+          }
+        ], 
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Domain"
+                  }, 
+                  "type": "array"
+                }
+              }
+            }, 
+            "description": "Operaci\u00f3n de lectura exitosa"
+          }
+        }, 
+        "summary": "Listado de dominios custom", 
+        "tags": [
+          "Custom Domains"
+        ]
+      }, 
+      "post": {
+        "description": "Crea un nuevo custom domain y lo agrega a la lista de custom domains", 
+        "operationId": "api.dns.crear", 
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InputDomain"
+              }
+            }
+          }, 
+          "required": true, 
+          "x-body-name": "domain"
+        }, 
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain"
+                }
+              }
+            }, 
+            "description": "Se cargo el dominio correctamente"
+          }, 
+          "400": {
+            "description": "Dominio o ip duplicado"
+          }
+        }, 
+        "summary": "Alta de un custom domain", 
+        "tags": [
+          "Custom Domains"
+        ]
+      }
+    }, 
+    "/custom-domains/{domain}": {
+      "delete": {
+        "description": "Borra un dominio custom del DoH", 
+        "operationId": "api.dns.borrar", 
+        "parameters": [
+          {
+            "description": "El dominio del registro a borrar", 
+            "in": "path", 
+            "name": "domain", 
+            "required": true, 
+            "schema": {
+              "type": "string"
+            }
+          }
+        ], 
+        "responses": {
+          "200": {
+            "description": "Operaci\u00f3n de borrado exitosa"
+          }, 
+          "404": {
+            "description": "Dominio no encontrado"
+          }
+        }, 
+        "summary": "Borrar custom domain", 
+        "tags": [
+          "Custom Domains"
+        ]
+      }, 
+      "put": {
+        "description": "Actualiza la informacion de un dominio custom del DoH", 
+        "operationId": "api.dns.modificar", 
+        "parameters": [
+          {
+            "description": "El dominio del registro a borrar", 
+            "in": "path", 
+            "name": "domain", 
+            "required": true, 
+            "schema": {
+              "type": "string"
+            }
+          }
+        ], 
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InputDomain"
+              }
+            }
+          }, 
+          "required": true, 
+          "x-body-name": "domain"
+        }, 
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain"
+                }
+              }
+            }, 
+            "description": "Se cargo el dominio correctamente"
+          }, 
+          "404": {
+            "description": "Domain not found"
+          }
+        }, 
+        "summary": "Actualiza custom domain", 
+        "tags": [
+          "Custom Domains"
+        ]
+      }
+    }, 
+    "/domains/{domain}": {
+      "get": {
+        "description": "Obtiene la ip asociada a un dominio", 
+        "operationId": "api.dns.obtener_dominio", 
+        "parameters": [
+          {
+            "description": "El dominio para el cual se quiere averiguar la ip", 
+            "in": "path", 
+            "name": "domain", 
+            "required": true, 
+            "schema": {
+              "example": "www.fi.uba.ar", 
+              "type": "string"
+            }
+          }
+        ], 
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain"
+                }
+              }
+            }, 
+            "description": "Operaci\u00f3n de lectura exitosa"
+          }, 
+          "404": {
+            "description": "Dominio no encontrado"
+          }
+        }, 
+        "summary": "Busqueda dominio", 
+        "tags": [
+          "Domains"
+        ]
+      }
+    }
+  }, 
+  "servers": [
+    {
+      "description": "Servidor de desarrollo", 
+      "url": "http://localhost:8080/api"
+    }
+  ]
+}

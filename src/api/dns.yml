@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
   version: "1.0.0"
-  title: API de Alumnos
-  description: Documentación de la API de Alumnos de la materia 75.43 Introducción a Sistemas Distribuidos
+  title: API Rest DoH
+  description: Documentación de la API de DNS on Https
 
 servers:
   - url: http://localhost:8080/api
@@ -23,10 +23,11 @@ paths:
           required: false
           schema:
             type: string
+            example: localhost
           description: El dominio del registro a buscar
       responses:
         200:
-          description: "Operación de lectura exitosa"
+          description: "Ok"
           content:
             application/json:
               schema:
@@ -116,6 +117,7 @@ paths:
           required: true
           schema:
             type: string
+            example: 'www.fi.uba.ar' 
           description: El dominio para el cual se quiere averiguar la ip
       responses:
         200:

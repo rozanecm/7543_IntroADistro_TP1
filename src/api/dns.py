@@ -76,12 +76,14 @@ def obtener_custom_domains(q = ''):
         custom_domains['items'] = custom_domains_list
         return custom_domains
 
+    
     dup = False
     custom_domains = {}
     filtered_custom_domains = []
     for dominio_existente in custom_domains_list:
-        dup = q == dominio_existente.get('domain')
-        if dup: 
+       # dup = q == dominio_existente.get('domain')
+        #if dup: 
+        if q in dominio_existente.get('domain'):
             filtered_custom_domains.append(dominio_existente)
     custom_domains['items'] = filtered_custom_domains
     return make_response(custom_domains, 200)
