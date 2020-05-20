@@ -151,14 +151,13 @@ def borrar(domain):
         return abort(400, 'Faltan datos para buscar el dominio')
 
     dup = False
-    i = 1
-    for dominio_existente in domains.values():
-        dup = domain == dominio_existente.get('domain')
-        if dup: 
-            del domains[i]
-            return make_response(dominio_existente, 200)
-        i = i + 1
-    return abort(404, 'domain not found')
+    if not esta_local(domain):
+        return make_response(jsonify({'error':'domain not found'}), 404)
+    
+    pos_in_dominios = info_accesos[domain].get_posiciones_in_dominios()
+    del domains[pos_in_dominios[0]]
+    del info_accesos[domain]
+    return make_response(jsonify({'domain':domain}), 200)
 
 def obtener_dominio(domain):
     """
