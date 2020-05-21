@@ -5,7 +5,7 @@ from flask import abort, make_response, jsonify
 # Data to serve with our API
 domains = {
     1: {
-        'domain': 'localhost',
+        'domain': 'custom.libre.com',
         'ip': '127.0.0.1',
         'custom': 'true',
     },
@@ -13,6 +13,11 @@ domains = {
         'domain': 'www.fi.uba.ar',
         'ip': '157.92.49.38',
         'custom': 'false',
+    },
+    3: {
+        'domain': 'custom.fi.uba.ar',
+        'ip': '17.22.41.38',
+        'custom': 'true',
     },
 }
 
@@ -55,7 +60,6 @@ def limpiar_dominios(posiciones):
     for posicion in posiciones:
         del domains[posicion]
 
-agregar_info_accesos('localhost', [1])
 agregar_info_accesos('www.fi.uba.ar', [2])
 
 # Create a handler for our read (GET) people
@@ -81,8 +85,6 @@ def obtener_custom_domains(q = ''):
     custom_domains = {}
     filtered_custom_domains = []
     for dominio_existente in custom_domains_list:
-       # dup = q == dominio_existente.get('domain')
-        #if dup: 
         if q in dominio_existente.get('domain'):
             filtered_custom_domains.append(dominio_existente)
     custom_domains['items'] = filtered_custom_domains

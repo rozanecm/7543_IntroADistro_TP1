@@ -17,7 +17,7 @@ class info_accesos_entry:
         return return_value
 
     def sirve(self):
-        print("chequeando si sirve. Pasaron", (datetime.now() - self.timestamp_of_retrieval).total_seconds(), " - TTL:", self.ttl)
+       # print("chequeando si sirve. Pasaron", (datetime.now() - self.timestamp_of_retrieval).total_seconds(), " - TTL:", self.ttl)
         return ((datetime.now() - self.timestamp_of_retrieval).total_seconds()) < self.ttl
     
     def get_posiciones_in_dominios(self):
